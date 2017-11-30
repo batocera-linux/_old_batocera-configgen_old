@@ -18,8 +18,8 @@ def generateControllerConfig(system, playersControllers, rom):
 
 def generateControllerConfig_emulatedwiimotes(playersControllers, rom):
     wiiMapping = {
-        'a':      'Buttons/2',  'b':        'Buttons/A',
-        'x':      'Buttons/1',  'y':        'Buttons/B',
+        'x':      'Buttons/2',  'b':        'Buttons/A',
+        'y':      'Buttons/1',  'a':        'Buttons/B',
         'pageup': 'Buttons/-',  'pagedown': 'Buttons/+',
         'select':    'Buttons/Home',
         'up': 'D-Pad/Up', 'down': 'D-Pad/Down', 'left': 'D-Pad/Left', 'right': 'D-Pad/Right',
@@ -91,8 +91,8 @@ def generateControllerConfig_emulatedwiimotes(playersControllers, rom):
 
 def generateControllerConfig_gamecube(playersControllers):
     gamecubeMapping = {
-        'a':      'Buttons/X',  'b':        'Buttons/A',
-        'x':      'Buttons/Y',  'y':        'Buttons/B',
+        'y':      'Buttons/X',  'b':        'Buttons/A',
+        'x':      'Buttons/Y',  'a':        'Buttons/B',
         'r2':     'Buttons/Z',  'start':    'Buttons/Start',
         'pageup': 'Triggers/L', 'pagedown': 'Triggers/R',
         'up': 'D-Pad/Up', 'down': 'D-Pad/Down', 'left': 'D-Pad/Left', 'right': 'D-Pad/Right',
