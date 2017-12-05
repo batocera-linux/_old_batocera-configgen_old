@@ -19,6 +19,7 @@ from generators.scummvm.scummvmGenerator import ScummVMGenerator
 from generators.dosbox.dosboxGenerator import DosBoxGenerator
 from generators.vice.viceGenerator import ViceGenerator
 from generators.fsuae.fsuaeGenerator import FsuaeGenerator
+from generators.amiberry.amiberryGenerator import AmiberryGenerator
 from generators.advancemame.advMameGenerator import AdvMameGenerator
 import controllersConfig as controllers
 import utils.runner as runner
@@ -38,6 +39,7 @@ generators = {
     'mupen64plus': MupenGenerator(),
     'vice': ViceGenerator(),
     'fsuae': FsuaeGenerator(),
+    'amiberry': AmiberryGenerator(),
     'reicast': ReicastGenerator(),
     'dolphin': DolphinGenerator(),
     'ppsspp': PPSSPPGenerator(),

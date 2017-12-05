@@ -26,6 +26,7 @@ recalboxBins = {'dosbox'      : '/usr/bin/dosbox'
               , 'scummvm'     : '/usr/bin/scummvm'
               , 'vice'        : '/usr/bin/x64'
               , 'fsuae'       : '/usr/bin/fs-uae'
+              , 'amiberry'    : '/usr/bin/amiberry'
               , 'dolphin'     : '/usr/bin/dolphin-emu'
               , 'advancemame' : '/usr/bin/advmame'
 }
