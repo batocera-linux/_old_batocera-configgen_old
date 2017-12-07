@@ -1,6 +1,5 @@
 import Command
 from generators.Generator import Generator
-from generators.amiberry.amiberryConfig import AmiberryConfig
 import recalboxFiles
 import os
 from os import path
