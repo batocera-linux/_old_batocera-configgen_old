@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 import Command
 import recalboxFiles
+import zipfile
+import shutil
 from generators.Generator import Generator
 import fsuaeControllers
 from os import path
@@ -57,12 +59,40 @@ class FsuaeGenerator(Generator):
         if system.config['core'] in ["CD32", "CDTV"]:
             device_type = "cdrom"
 
-        n = 0
-        for img in self.floppiesFromRom(rom):
-            commandArray.append("--" + device_type + "_image_" + str(n) + "=" + img + "")
-            if (n <= 1 and device_type == "floppy") or (n == 0 and device_type == "cdrom"):
-                commandArray.append("--" + device_type + "_drive_" + str(n) + "=" + img + "")
-            n += 1
+        # extract zip here (according to readme.txt in this folder, this is the right place)
+        TEMP_DIR="/recalbox/share/extractions/amiga/" # with trailing slash!
+        diskNames = []
+
+        # read from zip
+        if (rom.lower().endswith("zip")):
+            zf = zipfile.ZipFile(rom, 'r')
+            for name in zf.namelist():
+                d = name.lower()
+                if (d.endswith("ipf") or d.endswith("adf") or d.endswith("dms") or d.endswith("adz")):
+                    diskNames.append(name)
+
+            print("Amount of disks in zip " + str(len(diskNames)))
+
+        # if 2+ files, we have a multidisk ZIP (0=no zip)
+        if (len(diskNames) > 1):
+            print("extracting...")
+            shutil.rmtree(TEMP_DIR, ignore_errors=True) # cleanup
+            zf.extractall(TEMP_DIR)
+
+            n = 0
+            for disk in diskNames:
+                commandArray.append("--" + device_type + "_image_" + str(n) + "=" + TEMP_DIR + disk + "")
+                if (n <= 1 and device_type == "floppy") or (n == 0 and device_type == "cdrom"):
+                    commandArray.append("--" + device_type + "_drive_" + str(n) + "=" + TEMP_DIR + disk + "")
+                n += 1
+
+        else:
+            n = 0
+            for img in self.floppiesFromRom(rom):
+                commandArray.append("--" + device_type + "_image_" + str(n) + "=" + img + "")
+                if (n <= 1 and device_type == "floppy") or (n == 0 and device_type == "cdrom"):
+                    commandArray.append("--" + device_type + "_drive_" + str(n) + "=" + img + "")
+                n += 1
 
         # controllers
         n = 0
