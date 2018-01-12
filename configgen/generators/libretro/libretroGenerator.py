@@ -22,7 +22,11 @@ class LibretroGenerator(Generator):
             #  Write controllers configuration files
             libretroControllers.writeControllersConfig(system, playersControllers)
             # Write configuration to retroarchcustom.cfg
-            libretroConfig.writeLibretroConfig(system, playersControllers)
+            if 'bezel' not in system.config or system.config['bezel'] == '':
+                bezel = None
+            else:
+                bezel = system.config['bezel']
+            libretroConfig.writeLibretroConfig(system, playersControllers, rom, bezel)
 
         # Retroarch core on the filesystem
         retroarchCore = recalboxFiles.retroarchCores + system.config['core'] + recalboxFiles.libretroExt
@@ -57,7 +61,7 @@ class LibretroGenerator(Generator):
                 commandArray.append("--host")
             elif system.config['netplaymode'] == 'client':
                 commandArray.extend(["--connect", system.config['netplay.server.address']])
-        
+
         # Optionnal arguments
         if 'args' in system.config and system.config['args'] is not None:
              commandArray.extend(system.config['args'])

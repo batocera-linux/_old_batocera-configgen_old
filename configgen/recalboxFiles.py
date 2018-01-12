@@ -103,3 +103,7 @@ viceConfig = CONF + "/vice/vice.conf"
 
 advancemameConfig = CONF + '/advancemame/advmame.rc'
 advancemameConfigOrigin = CONF + '/advancemame/advmame.rc.origin'
+
+overlaySystem = "/recalbox/share_init/decorations"
+overlayUser = "/recalbox/share/decorations"
+overlayConfigFile = "/recalbox/share/system/configs/retroarch/overlay.cfg"

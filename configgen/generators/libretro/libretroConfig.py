@@ -4,6 +4,8 @@ import os
 import recalboxFiles
 import settings
 from settings.unixSettings import UnixSettings
+import subprocess
+import json
 
 sys.path.append(
     os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
@@ -48,12 +50,12 @@ systemToP2Device = {'msx': '257', 'msx1': '257', 'msx2': '257', 'colecovision': 
 # Netplay modes
 systemNetplayModes = {'host', 'client'}
 
-def writeLibretroConfig(system, controllers):
-    writeLibretroConfigToFile(createLibretroConfig(system, controllers))
+def writeLibretroConfig(system, controllers, rom, bezel):
+    writeLibretroConfigToFile(createLibretroConfig(system, controllers, rom, bezel))
 
 
 # take a system, and returns a dict of retroarch.cfg compatible parameters
-def createLibretroConfig(system, controllers):
+def createLibretroConfig(system, controllers, rom, bezel):
     retroarchConfig = dict()
     recalboxConfig = system.config
     if enabled('smooth', recalboxConfig):
@@ -68,6 +70,7 @@ def createLibretroConfig(system, controllers):
     else:
         retroarchConfig['video_shader_enable'] = 'false'
 
+    retroarchConfig['aspect_ratio_index'] = '' # reset in case config was changed (or for overlays)
     if defined('ratio', recalboxConfig):
         if recalboxConfig['ratio'] in ratioIndexes:
             retroarchConfig['aspect_ratio_index'] = ratioIndexes.index(recalboxConfig['ratio'])
@@ -160,11 +163,91 @@ def createLibretroConfig(system, controllers):
         retroarchConfig['fps_show'] = 'true'
     else:
         retroarchConfig['fps_show'] = 'false'
-        
-    return retroarchConfig
 
+    # bezel
+    writeBezelConfig(bezel, retroarchConfig, system.name, rom)
+
+    return retroarchConfig
 
 def writeLibretroConfigToFile(config):
     for setting in config:
         libretroSettings.save(setting, config[setting])
 
+def writeBezelConfig(bezel, retroarchConfig, systemName, rom):
+    # disable the overlay
+    # if all steps are passed, enable them
+    retroarchConfig['input_overlay_hide_in_menu'] = "false"
+    overlay_cfg_file  = recalboxFiles.overlayConfigFile
+
+    # bezel are disabled
+    if bezel is None:
+        retroarchConfig['input_overlay_enable'] = "false"
+        retroarchConfig['video_message_pos_x']  = 0.05
+        retroarchConfig['video_message_pos_y']  = 0.05
+        return
+
+    # by order choose :
+    # rom name in the user directory (mario.png)
+    # rom name in the system directory (mario.png)
+    # system name in the user directory (gb.png)
+    # system name in the system directory (gb.png)
+    # default name (default.png)
+    # else return
+    romBase = os.path.splitext(os.path.basename(rom))[0] # filename without extension
+    overlay_info_file = recalboxFiles.overlayUser + "/" + bezel + "/games/" + rom + ".info"
+    overlay_png_file  = recalboxFiles.overlayUser + "/" + bezel + "/games/" + rom + ".png"
+    if not (os.path.isfile(overlay_info_file) and os.path.isfile(overlay_png_file)):
+        overlay_info_file = recalboxFiles.overlaySystem + "/" + bezel + "/games/" + rom + ".info"
+        overlay_png_file  = recalboxFiles.overlaySystem + "/" + bezel + "/games/" + rom + ".png"
+        if not (os.path.isfile(overlay_info_file) and os.path.isfile(overlay_png_file)):
+            overlay_info_file = recalboxFiles.overlayUser + "/" + bezel + "/system/" + systemName + ".info"
+            overlay_png_file  = recalboxFiles.overlayUser + "/" + bezel + "/system/" + systemName + ".png"
+            if not (os.path.isfile(overlay_info_file) and os.path.isfile(overlay_png_file)):
+                overlay_info_file = recalboxFiles.overlaySystem + "/" + bezel + "/system/" + systemName + ".info"
+                overlay_png_file  = recalboxFiles.overlaySystem + "/" + bezel + "/system/" + systemName + ".png"
+                if not (os.path.isfile(overlay_info_file) and os.path.isfile(overlay_png_file)):
+                    overlay_info_file = recalboxFiles.overlayUser + "/" + bezel + "/default.info"
+                    overlay_png_file  = recalboxFiles.overlayUser + "/" + bezel + "/default.png"
+                    if not (os.path.isfile(overlay_info_file) and os.path.isfile(overlay_png_file)):
+                        overlay_info_file = recalboxFiles.overlaySystem + "/" + bezel + "/default.info"
+                        overlay_png_file  = recalboxFiles.overlaySystem + "/" + bezel + "/default.png"
+                        if not (os.path.isfile(overlay_info_file) and os.path.isfile(overlay_png_file)):
+                            return
+    infos = json.load(open(overlay_info_file))
+
+    # no overlay resize
+    res = getCurrentResolution()
+    if res["width"] != infos["width"] and res["height"] != infos["height"]:
+        return
+
+    retroarchConfig['input_overlay_enable']       = "true"
+    retroarchConfig['input_overlay_scale']        = "1.0"
+    retroarchConfig['input_overlay']              = overlay_cfg_file
+    retroarchConfig['input_overlay_hide_in_menu'] = "true"
+    retroarchConfig['input_overlay_opacity']  = infos["opacity"]
+    retroarchConfig['custom_viewport_x']      = infos["left"]
+    retroarchConfig['custom_viewport_y']      = infos["top"]
+    retroarchConfig['custom_viewport_width']  = infos["width"]  - infos["left"] - infos["right"]
+    retroarchConfig['custom_viewport_height'] = infos["height"] - infos["top"]  - infos["bottom"]
+    retroarchConfig['aspect_ratio_index']     = 22 # overwrited from the beginning of this file
+    retroarchConfig['video_message_pos_x']    = infos["messagex"]
+    retroarchConfig['video_message_pos_y']    = infos["messagey"]
+    writeBezelCfgConfig(overlay_cfg_file, overlay_png_file)
+
+def writeBezelCfgConfig(cfgFile, overlay_png_file):
+    fd = open(cfgFile, "w")
+    fd.write("overlays = 1\n")
+    fd.write("overlay0_overlay = " + overlay_png_file + "\n")
+    fd.write("overlay0_full_screen = true\n")
+    fd.write("overlay0_descs = 0\n")
+    fd.close()
+
+def getCurrentResolution():
+	proc = subprocess.Popen(["tvservice.current"], stdout=subprocess.PIPE, shell=True)
+	(out, err) = proc.communicate()
+	tvmodes = json.loads(out)
+
+	for tvmode in tvmodes:
+	    return { "width": tvmode["width"], "height": tvmode["height"] }
+
+        raise Exception("No current resolution found")
