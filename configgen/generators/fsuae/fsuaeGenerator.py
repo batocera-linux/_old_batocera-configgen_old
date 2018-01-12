@@ -59,8 +59,8 @@ class FsuaeGenerator(Generator):
         if system.config['core'] in ["CD32", "CDTV"]:
             device_type = "cdrom"
 
-        # extract zip here (according to readme.txt in this folder, this is the right place)
-        TEMP_DIR="/recalbox/share/extractions/amiga/" # with trailing slash!
+        # extract zip here
+        TEMP_DIR="/tmp/fsuae/" # with trailing slash!
         diskNames = []
 
         # read from zip
