@@ -180,10 +180,12 @@ def writeBezelConfig(bezel, retroarchConfig, systemName, rom):
     overlay_cfg_file  = recalboxFiles.overlayConfigFile
 
     # bezel are disabled
+    # default values in case something wrong append
+    retroarchConfig['input_overlay_enable'] = "false"
+    retroarchConfig['video_message_pos_x']  = 0.05
+    retroarchConfig['video_message_pos_y']  = 0.05
+
     if bezel is None:
-        retroarchConfig['input_overlay_enable'] = "false"
-        retroarchConfig['video_message_pos_x']  = 0.05
-        retroarchConfig['video_message_pos_y']  = 0.05
         return
 
     # by order choose :
