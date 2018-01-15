@@ -202,11 +202,11 @@ def writeBezelConfig(bezel, retroarchConfig, systemName, rom):
         overlay_info_file = recalboxFiles.overlaySystem + "/" + bezel + "/games/" + rom + ".info"
         overlay_png_file  = recalboxFiles.overlaySystem + "/" + bezel + "/games/" + rom + ".png"
         if not (os.path.isfile(overlay_info_file) and os.path.isfile(overlay_png_file)):
-            overlay_info_file = recalboxFiles.overlayUser + "/" + bezel + "/system/" + systemName + ".info"
-            overlay_png_file  = recalboxFiles.overlayUser + "/" + bezel + "/system/" + systemName + ".png"
+            overlay_info_file = recalboxFiles.overlayUser + "/" + bezel + "/systems/" + systemName + ".info"
+            overlay_png_file  = recalboxFiles.overlayUser + "/" + bezel + "/systems/" + systemName + ".png"
             if not (os.path.isfile(overlay_info_file) and os.path.isfile(overlay_png_file)):
-                overlay_info_file = recalboxFiles.overlaySystem + "/" + bezel + "/system/" + systemName + ".info"
-                overlay_png_file  = recalboxFiles.overlaySystem + "/" + bezel + "/system/" + systemName + ".png"
+                overlay_info_file = recalboxFiles.overlaySystem + "/" + bezel + "/systems/" + systemName + ".info"
+                overlay_png_file  = recalboxFiles.overlaySystem + "/" + bezel + "/systems/" + systemName + ".png"
                 if not (os.path.isfile(overlay_info_file) and os.path.isfile(overlay_png_file)):
                     overlay_info_file = recalboxFiles.overlayUser + "/" + bezel + "/default.info"
                     overlay_png_file  = recalboxFiles.overlayUser + "/" + bezel + "/default.png"
