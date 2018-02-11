@@ -22,7 +22,8 @@ def getDolphinLangFromEnvironment():
         return availableLanguages["en_US"]
 
 class DolphinGenerator(Generator):
-    def generate(self, system, rom, playersControllers):
+
+    def generate(self, system, rom, playersControllers, gameResolution):
         dolphinControllers.generateControllerConfig(system, playersControllers, rom)
 
         dolphinSettings = UnixSettings(recalboxFiles.dolphinIni, separator=' ')
@@ -52,4 +53,4 @@ class DolphinGenerator(Generator):
         commandArray = [recalboxFiles.recalboxBins[system.config['emulator']], "-e", rom]
         if 'args' in system.config and system.config['args'] is not None:
              commandArray.extend(system.config['args'])
-        return Command.Command(videomode=system.config['videomode'], array=commandArray, env={"XDG_CONFIG_HOME":recalboxFiles.CONF, "XDG_DATA_HOME":recalboxFiles.SAVES})
+        return Command.Command(array=commandArray, env={"XDG_CONFIG_HOME":recalboxFiles.CONF, "XDG_DATA_HOME":recalboxFiles.SAVES})

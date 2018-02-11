@@ -5,7 +5,8 @@ import os
 from os import path
 
 class AmiberryGenerator(Generator):
-    def generate(self, system, rom, playersControllers):
+
+    def generate(self, system, rom, playersControllers, gameResolution):
         commandArray = [ recalboxFiles.recalboxBins[system.config['emulator']], "-G", "-core=" + system.config['core'] ]
 
         # floppies
@@ -54,7 +55,7 @@ class AmiberryGenerator(Generator):
         if 'args' in system.config and system.config['args'] is not None:
             commandArray.extend(system.config['args'])
         os.chdir("/usr/share/amiberry")
-        return Command.Command(videomode=system.config['videomode'], array=commandArray)
+        return Command.Command(array=commandArray)
 
     # from one file (x1.zip), get the list of all existing files with the same extension + last char (as number) suffix
     # for example, "/path/toto0.zip" becomes ["/path/toto0.zip", "/path/toto1.zip", "/path/toto2.zip"]

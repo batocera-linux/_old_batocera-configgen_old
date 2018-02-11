@@ -9,9 +9,10 @@ import os.path
 
 
 class LibretroGenerator(Generator):
+
     # Main entry of the module
     # Configure retroarch and return a command
-    def generate(self, system, rom, playersControllers):
+    def generate(self, system, rom, playersControllers, gameResolution):
         # Settings recalbox default config file if no user defined one
         if not system.config['configfile']:
             # Using recalbox config file
@@ -26,7 +27,7 @@ class LibretroGenerator(Generator):
                 bezel = None
             else:
                 bezel = system.config['bezel']
-            libretroConfig.writeLibretroConfig(system, playersControllers, rom, bezel)
+            libretroConfig.writeLibretroConfig(system, playersControllers, rom, bezel, gameResolution)
 
         # Retroarch core on the filesystem
         retroarchCore = recalboxFiles.retroarchCores + system.config['core'] + recalboxFiles.libretroExt
@@ -67,4 +68,4 @@ class LibretroGenerator(Generator):
              commandArray.extend(system.config['args'])
              
         commandArray.append(rom)
-        return Command.Command(videomode=system.config['videomode'], array=commandArray)
+        return Command.Command(array=commandArray)

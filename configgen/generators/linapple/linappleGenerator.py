@@ -60,8 +60,8 @@ class LinappleGenerator(Generator):
                 os.symlink(sys_filename, usr_filename)
 
         return True
-
-    def generate(self, system, rom, playersControllers):
+    
+    def generate(self, system, rom, playersControllers, gameResolution):
         '''
         Configure linapple inputs and return the command line to run.
         
@@ -99,39 +99,7 @@ class LinappleGenerator(Generator):
         if 'args' in system.config and system.config['args'] is not None:
             commandArray.extend(system.config['args'])
 
-        return Command.Command(videomode=system.config['videomode'], array=commandArray)
-
-    def config_upgrade(self, version):
-        '''
-        Upgrade the user's configuration file with new values added to the
-        system configuration file upgraded by S11Share:do_upgrade()
-        
-        Args: 
-            version (str): New Recalbox version
-            
-        Returns (bool):
-            Returns True if this Generators sucessfully handled the upgrade.
-        '''
-        # Check resources
-        if not self.check_resources(): 
-            return False
-
-        # Load system configuration file
-        config = LinappleConfig(filename=os.path.join(
-                    self.path_init, self.filename))
-
-        # If an user's configuration file exists, upgrade it
-        usr_conf = os.path.join(self.path_user, self.filename)
-        if os.path.exists(usr_conf):
-            config_sys = config
-            config = LinappleConfig(filename=usr_conf)
-            for k,v in config_sys.settings.items():
-                if k not in config.settings:
-                    config.settings[k]=v
-
-        # Save config file (original/updated) to user's directory
-        config.save(filename=usr_conf)
-        return True
+        return Command.Command(array=commandArray)
 
 # Local Variables:
 # tab-width:4

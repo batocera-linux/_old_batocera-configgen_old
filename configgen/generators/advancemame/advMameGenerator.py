@@ -8,8 +8,12 @@ import os.path
 
 
 class AdvMameGenerator(Generator):
+
+    def getResolution(self, config):
+        return 'default'
+    
     # Main entry of the module
-    def generate(self, system, rom, playersControllers):
+    def generate(self, system, rom, playersControllers, gameResolution):
         romName = os.path.basename(os.path.splitext(rom)[0])
         commandArray = [recalboxFiles.recalboxBins[system.config['emulator']]]
         
@@ -24,5 +28,4 @@ class AdvMameGenerator(Generator):
         commandArray.extend( ['-cfg', system.config['configfile']] )
         commandArray.append(romName)
         
-        #~ return Command.Command(videomode=system.config['videomode'], array=commandArray, env={"TERM":"linux"})
-        return Command.Command(videomode='default', array=commandArray, env={"TERM":"linux"})
+        return Command.Command(array=commandArray, env={"TERM":"linux"})

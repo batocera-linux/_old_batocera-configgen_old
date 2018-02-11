@@ -6,9 +6,13 @@ import os.path
 
 
 class ScummVMGenerator(Generator):
+
+    def getResolution(self, config):
+        return 'default'
+    
     # Main entry of the module
     # Configure mupen and return a command
-    def generate(self, system, rom, playersControllers):
+    def generate(self, system, rom, playersControllers, gameResolution):
         # Settings recalbox default config file if no user defined one
         if not system.config['configfile']:
             # Using recalbox config file
@@ -30,4 +34,4 @@ class ScummVMGenerator(Generator):
             commandArray.extend(system.config['args'])
         commandArray.append("""{}""".format(romName))
 
-        return Command.Command(videomode='default', array=commandArray, env={"SDL_VIDEO_GL_DRIVER":"/usr/lib/libGLESv2.so"})
+        return Command.Command(array=commandArray, env={"SDL_VIDEO_GL_DRIVER":"/usr/lib/libGLESv2.so"})

@@ -15,7 +15,7 @@ logdir = HOME + '/logs/'
 
 # This dict is indexed on the emulator name, not on the system
 recalboxBins = {'dosbox'      : '/usr/bin/dosbox'
-              , 'fba2x'       :'/usr/bin/fba2x'
+              , 'fba2x'       : '/usr/bin/fba2x'
               , 'kodi'        : '/recalbox/scripts/kodilauncher.sh'
               , 'libretro'    : '/usr/bin/retroarch'
               , 'linapple'    : '/usr/bin/linapple'

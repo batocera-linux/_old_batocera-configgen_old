@@ -13,9 +13,10 @@ from os.path import isdir
 from os.path import isfile
 
 class ReicastGenerator(Generator):
+
     # Main entry of the module
     # Configure fba and return a command
-    def generate(self, system, rom, playersControllers):
+    def generate(self, system, rom, playersControllers, gameResolution):
         if not system.config['configfile']:
             # Write emu.cfg to map joysticks, init with the default emu.cfg
             Config = ConfigParser.ConfigParser()
@@ -63,4 +64,4 @@ class ReicastGenerator(Generator):
         # VMU will be in $XDG_DATA_HOME because it needs rw access -> /recalbox/share/saves/dreamcast
         # BIOS will be in $XDG_DATA_DIRS
         # controller cfg files are set with an absolute path, so no worry
-        return Command.Command(videomode=system.config['videomode'], array=commandArray, env={"XDG_CONFIG_HOME":recalboxFiles.CONF, "XDG_DATA_HOME":recalboxFiles.reicastSaves, "XDG_DATA_DIRS":recalboxFiles.reicastBios})
+        return Command.Command(array=commandArray, env={"XDG_CONFIG_HOME":recalboxFiles.CONF, "XDG_DATA_HOME":recalboxFiles.reicastSaves, "XDG_DATA_DIRS":recalboxFiles.reicastBios})

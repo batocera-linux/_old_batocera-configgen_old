@@ -4,7 +4,6 @@ import os
 import recalboxFiles
 import settings
 from settings.unixSettings import UnixSettings
-import subprocess
 import json
 
 sys.path.append(
@@ -50,12 +49,12 @@ systemToP2Device = {'msx': '257', 'msx1': '257', 'msx2': '257', 'colecovision': 
 # Netplay modes
 systemNetplayModes = {'host', 'client'}
 
-def writeLibretroConfig(system, controllers, rom, bezel):
-    writeLibretroConfigToFile(createLibretroConfig(system, controllers, rom, bezel))
+def writeLibretroConfig(system, controllers, rom, bezel, gameResolution):
+    writeLibretroConfigToFile(createLibretroConfig(system, controllers, rom, bezel, gameResolution))
 
 
 # take a system, and returns a dict of retroarch.cfg compatible parameters
-def createLibretroConfig(system, controllers, rom, bezel):
+def createLibretroConfig(system, controllers, rom, bezel, gameResolution):
     retroarchConfig = dict()
     recalboxConfig = system.config
     if enabled('smooth', recalboxConfig):
@@ -165,7 +164,7 @@ def createLibretroConfig(system, controllers, rom, bezel):
         retroarchConfig['fps_show'] = 'false'
 
     # bezel
-    writeBezelConfig(bezel, retroarchConfig, system.name, rom)
+    writeBezelConfig(bezel, retroarchConfig, system.name, rom, gameResolution)
 
     return retroarchConfig
 
@@ -173,7 +172,7 @@ def writeLibretroConfigToFile(config):
     for setting in config:
         libretroSettings.save(setting, config[setting])
 
-def writeBezelConfig(bezel, retroarchConfig, systemName, rom):
+def writeBezelConfig(bezel, retroarchConfig, systemName, rom, gameResolution):
     # disable the overlay
     # if all steps are passed, enable them
     retroarchConfig['input_overlay_hide_in_menu'] = "false"
@@ -218,8 +217,7 @@ def writeBezelConfig(bezel, retroarchConfig, systemName, rom):
     infos = json.load(open(overlay_info_file))
 
     # no overlay resize
-    res = getCurrentResolution()
-    if res["width"] != infos["width"] and res["height"] != infos["height"]:
+    if gameResolution["width"] != infos["width"] and gameResolution["height"] != infos["height"]:
         return
 
     retroarchConfig['input_overlay_enable']       = "true"
@@ -243,13 +241,3 @@ def writeBezelCfgConfig(cfgFile, overlay_png_file):
     fd.write("overlay0_full_screen = true\n")
     fd.write("overlay0_descs = 0\n")
     fd.close()
-
-def getCurrentResolution():
-	proc = subprocess.Popen(["tvservice.current"], stdout=subprocess.PIPE, shell=True)
-	(out, err) = proc.communicate()
-	tvmodes = json.loads(out)
-
-	for tvmode in tvmodes:
-	    return { "width": tvmode["width"], "height": tvmode["height"] }
-
-        raise Exception("No current resolution found")

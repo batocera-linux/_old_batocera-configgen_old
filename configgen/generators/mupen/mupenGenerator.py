@@ -7,15 +7,16 @@ from generators.Generator import Generator
 
 
 class MupenGenerator(Generator):
+
     # Main entry of the module
     # Configure mupen and return a command
-    def generate(self, system, rom, playersControllers):
+    def generate(self, system, rom, playersControllers, gameResolution):
         # Settings recalbox default config file if no user defined one
         if not system.config['configfile']:
             # Using recalbox config file
             system.config['configfile'] = recalboxFiles.mupenCustom
             # Write configuration file
-            mupenConfig.writeMupenConfig(system, playersControllers)
+            mupenConfig.writeMupenConfig(system, playersControllers, gameResolution)
             #  Write controllers configuration files
             mupenControllers.writeControllersConfig(playersControllers)
 
@@ -25,4 +26,4 @@ class MupenGenerator(Generator):
             commandArray.extend(system.config['args'])
         commandArray.append(rom)
 
-        return Command.Command(videomode=system.config['videomode'], array=commandArray, env={"SDL_VIDEO_GL_DRIVER":"/usr/lib/libGLESv2.so"})
+        return Command.Command(array=commandArray, env={"SDL_VIDEO_GL_DRIVER":"/usr/lib/libGLESv2.so"})

@@ -26,6 +26,10 @@ import utils.runner as runner
 import signal
 import recalboxFiles
 import os
+import subprocess
+import json
+import utils.videoMode as videoMode
+import utils.eslog as eslog
 
 generators = {
     'fba2x': Fba2xGenerator(),
@@ -45,86 +49,7 @@ generators = {
     'ppsspp': PPSSPPGenerator(),
     'advancemame' : AdvMameGenerator()
 }
-
-# List emulators with their cores rest mupen64, scummvm
-emulators = dict()
-# Nintendo
-emulators["snes"] = Emulator(name='snes', emulator='libretro', core='pocketsnes')
-emulators["nes"] = Emulator(name='nes', emulator='libretro', core='fceunext')
-emulators["n64"] = Emulator(name='n64', emulator='mupen64plus', core='gliden64')
-emulators["gba"] = Emulator(name='gba', emulator='libretro', core='gpsp')
-emulators["gb"] = Emulator(name='gb', emulator='libretro', core='gambatte')
-emulators["gbc"] = Emulator(name='gbc', emulator='libretro', core='gambatte')
-emulators["fds"] = Emulator(name='fds', emulator='libretro', core='nestopia')
-emulators["virtualboy"] = Emulator(name='virtualboy', emulator='libretro', core='vb')
-emulators["gamecube"] = Emulator(name='gamecube', emulator='dolphin')
-emulators["wii"] = Emulator(name='wii', emulator='dolphin')
-emulators["nds"] = Emulator(name='nds', emulator='libretro', core='desmume')
-# Sega
-emulators["sg1000"] = Emulator(name='sg1000', emulator='libretro', core='genesisplusgx')
-emulators["mastersystem"] = Emulator(name='mastersystem', emulator='libretro', core='picodrive')
-emulators["megadrive"] = Emulator(name='megadrive', emulator='libretro', core='picodrive')
-emulators["gamegear"] = Emulator(name='gamegear', emulator='libretro', core='genesisplusgx')
-emulators["sega32x"] = Emulator(name='sega32x', emulator='libretro', core='picodrive')
-emulators["segacd"] = Emulator(name='segacd', emulator='libretro', core='picodrive')
-emulators["saturn"] = Emulator(name='saturn', emulator='libretro', core='yabause')
-emulators["dreamcast"] = Emulator(name='dreamcast', emulator='reicast')
-# Arcade
-emulators["neogeo"] = Emulator(name='neogeo', emulator='fba2x')
-emulators["mame"] = Emulator(name='mame', emulator='libretro', core='mame078')
-emulators["fba"] = Emulator(name='fba', emulator='fba2x')
-emulators["fba_libretro"] = Emulator(name='fba_libretro', emulator='libretro', core='fba')
-emulators["advancemame"] = Emulator(name='advancemame', emulator='advmame')
-# Computers
-emulators["msx"] = Emulator(name='msx', emulator='libretro', core='bluemsx')
-emulators["msx1"] = Emulator(name='msx1', emulator='libretro', core='bluemsx')
-emulators["msx2"] = Emulator(name='msx2', emulator='libretro', core='bluemsx')
-
-emulators["amiga500"]  = Emulator(name='amiga500',  emulator='fsuae', core='A500')
-emulators["amiga500p"] = Emulator(name='amiga500p', emulator='fsuae', core='A500+')
-emulators["amiga600"]  = Emulator(name='amiga600',  emulator='fsuae', core='A600')
-emulators["amiga1000"] = Emulator(name='amiga1000', emulator='fsuae', core='A1000')
-emulators["amiga1200"] = Emulator(name='amiga1200', emulator='fsuae', core='A1200')
-emulators["amiga3000"] = Emulator(name='amiga3000', emulator='fsuae', core='A3000')
-emulators["amiga4000"] = Emulator(name='amiga4000', emulator='fsuae', core='A4000')
-emulators["amigacd32"] = Emulator(name='amigacd32', emulator='fsuae', core='CD32')
-emulators["amigacdtv"] = Emulator(name='amigacdtv', emulator='fsuae', core='CDTV')
-
-emulators["amstradcpc"] = Emulator(name='amstradcpc', emulator='libretro', core='cap32')
-emulators["apple2"] = Emulator(name='apple2', emulator='linapple', videomode='default')
-emulators["atarist"] = Emulator(name='atarist', emulator='libretro', core='hatari')
-emulators["zxspectrum"] = Emulator(name='zxspectrum', emulator='libretro', core='fuse')
-emulators["odyssey2"] = Emulator(name='odyssey2', emulator='libretro', core='o2em')
-emulators["zx81"] = Emulator(name='zx81', emulator='libretro', core='81')
-emulators["dos"] = Emulator(name='dos', emulator='dosbox', videomode='default')
-emulators["c64"] = Emulator(name='c64', emulator='vice', core='x64')
-#
-emulators["ngp"] = Emulator(name='ngp', emulator='libretro', core='mednafen_ngp')
-emulators["ngpc"] = Emulator(name='ngpc', emulator='libretro', core='mednafen_ngp')
-emulators["gw"] = Emulator(name='gw', emulator='libretro', core='gw')
-emulators["vectrex"] = Emulator(name='vectrex', emulator='libretro', core='vecx')
-emulators["lynx"] = Emulator(name='lynx', emulator='libretro', core='mednafen_lynx')
-emulators["lutro"] = Emulator(name='lutro', emulator='libretro', core='lutro')
-emulators["wswan"] = Emulator(name='wswan', emulator='libretro', core='mednafen_wswan', ratio='16/10')
-emulators["wswanc"] = Emulator(name='wswanc', emulator='libretro', core='mednafen_wswan', ratio='16/10')
-emulators["pcengine"] = Emulator(name='pcengine', emulator='libretro', core='mednafen_supergrafx')
-emulators["pcenginecd"] = Emulator(name='pcenginecd', emulator='libretro', core='mednafen_supergrafx')
-emulators["supergrafx"] = Emulator(name='supergrafx', emulator='libretro', core='mednafen_supergrafx')
-emulators["atari2600"] = Emulator(name='atari2600', emulator='libretro', core='stella')
-emulators["atari7800"] = Emulator(name='atari7800', emulator='libretro', core='prosystem')
-emulators["prboom"] = Emulator(name='prboom', emulator='libretro', core='prboom')
-emulators["psx"] = Emulator(name='psx', emulator='libretro', core='pcsx_rearmed')
-emulators["cavestory"] = Emulator(name='cavestory', emulator='libretro', core='nxengine')
-emulators["imageviewer"] = Emulator(name='imageviewer', emulator='libretro', core='imageviewer')
-emulators["scummvm"] = Emulator(name='scummvm', emulator='scummvm', videomode='default')
-emulators["colecovision"] = Emulator(name='colecovision', emulator='libretro', core='bluemsx')
-emulators["jaguar"] = Emulator(name='jaguar', emulator='libretro', core='virtualjaguar')
-emulators["3do"] = Emulator(name='3do', emulator='libretro', core='4do')
-emulators["kodi"] = Emulator(name='kodi', emulator='kodi', videomode='default')
-emulators["moonlight"] = Emulator(name='moonlight', emulator='moonlight')
-emulators["psp"] = Emulator(name='psp', emulator='ppsspp')
-
-
+    
 def main(args):
     playersControllers = dict()
     if not args.demo:
@@ -134,47 +59,213 @@ def main(args):
                                                               args.p3index, args.p3guid, args.p3name, args.p3devicepath, args.p3nbaxes,
                                                               args.p4index, args.p4guid, args.p4name, args.p4devicepath, args.p4nbaxes,
                                                               args.p5index, args.p5guid, args.p5name, args.p5devicepath, args.p5nbaxes)
-
+    # find the system to run
     systemName = args.system
-    # Main Program
-    # A generator will configure its emulator, and return a command
-    if systemName in emulators:
-        system = emulators[systemName]
-        system.configure(args.emulator, args.core, args.ratio, args.netplay)
+    eslog.log("Running system: " + systemName)
+    system = getDefaultEmulator(systemName)
+    if system is None:
+        eslog.log("no emulator defined. exiting.")
+        return 1
+    system.configure(args.emulator, args.core, args.ratio, args.netplay)
 
-        # Save dir
+    # the resolution must be changed before configuration while the configuration may depend on it (ie bezels)
+    newResolution = generators[system.config['emulator']].getResolution(system.config)
+    exitCode = -1
+    try:
+        videoMode.changeResolution(newResolution)
+        gameResolution = videoMode.getCurrentResolution()
+        eslog.log("resolution: " + str(gameResolution["width"]) + "x" + str(gameResolution["height"]))
+
+        # savedir: create the save directory is not already done
         dirname = os.path.join(recalboxFiles.savesDir, system.name)
         if not os.path.exists(dirname):
             os.makedirs(dirname)
-        
-        
-        if system.config['emulator'] not in recalboxFiles.recalboxBins:
-            strErr = "ERROR : {} is not a known emulator".format(system.config['emulator'])
-            print >> sys.stderr, strErr
-            exit(2)
-        
-        command = generators[system.config['emulator']].generate(system, args.rom, playersControllers)
-        # The next line is commented and will eventually be used instead of the previous one
-        # if we even want the binary to be set from here rather than from the generator
-        # command.array.insert(0, recalboxFiles.recalboxBins[system.config['emulator']])
-        print(command.array)
-        return runner.runCommand(command)
 
-def config_upgrade(version):
-    '''
-    Upgrade all generators user's configuration files with new values added
-    to their system configuration file upgraded by S11Share:do_upgrade()
-    
-    Args: 
-        version (str): New Recalbox version
-        
-    Returns (bool):
-        Returns True if all generators sucessfully handled the upgraded.
-    '''
-    res = True
-    for g in generators.values():
-        res &= g.config_upgrade(version)
-    return res
+        # run the emulator
+        exitCode = runCommand(generators[system.config['emulator']].generate(system, args.rom, playersControllers, gameResolution))
+    finally:
+        # always restore the resolution
+        if newResolution != 'default':
+            try:
+                videoMode.resetResolution()
+            except Exception:
+                pass # don't fail
+    # exit
+    return exitCode
+
+def runCommand(command):
+    global proc
+
+    command.env.update(os.environ)
+    eslog.log("command:" + str(command.array))
+    eslog.log("env: "    + str(command.env))
+    proc = subprocess.Popen(command.array, env=command.env, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    exitcode = -1
+    try:
+        out, err = proc.communicate()
+        exitcode = proc.returncode
+        sys.stdout.write(out)
+        sys.stderr.write(err)
+    except:
+        eslog("emulator exited")
+
+    return exitcode
+
+# List emulators with their default emulator/cores
+def getDefaultEmulator(systemName):
+
+    # Nintendo
+    if systemName == "nes":
+        return Emulator(name='nes',        emulator='libretro',    core='fceunext')
+    if systemName == "snes":
+        return Emulator(name='snes',       emulator='libretro',    core='pocketsnes')
+    if systemName == "n64":
+        return Emulator(name='n64',        emulator='mupen64plus', core='gliden64')
+    if systemName == "gba":
+        return Emulator(name='gba',        emulator='libretro',    core='gpsp')
+    if systemName == "gb":
+        return Emulator(name='gb',         emulator='libretro',    core='gambatte')
+    if systemName == "gbc":
+        return Emulator(name='gbc',        emulator='libretro',    core='gambatte')
+    if systemName == "fds":
+        return Emulator(name='fds',        emulator='libretro',    core='nestopia')
+    if systemName == "virtualboy":
+        return Emulator(name='virtualboy', emulator='libretro',    core='vb')
+    if systemName == "gamecube":
+        return Emulator(name='gamecube',   emulator='dolphin')
+    if systemName == "wii":
+        return Emulator(name='wii',        emulator='dolphin')
+    if systemName == "nds":
+        return Emulator(name='nds',        emulator='libretro',    core='desmume')
+ 
+    # Sega
+    if systemName == "sg1000":
+        return Emulator(name='sg1000',       emulator='libretro', core='genesisplusgx')
+    if systemName == "mastersystem":
+        return Emulator(name='mastersystem', emulator='libretro', core='picodrive')
+    if systemName == "megadrive":
+        return Emulator(name='megadrive',    emulator='libretro', core='picodrive')
+    if systemName == "gamegear":
+        return Emulator(name='gamegear',     emulator='libretro', core='genesisplusgx')
+    if systemName == "sega32x":
+        return Emulator(name='sega32x',      emulator='libretro', core='picodrive')
+    if systemName == "segacd":
+        return Emulator(name='segacd',       emulator='libretro', core='picodrive')
+    if systemName == "saturn":
+        return Emulator(name='saturn',       emulator='libretro', core='yabause')
+    if systemName == "dreamcast":
+        return Emulator(name='dreamcast',    emulator='reicast')
+ 
+     # Arcade
+    if systemName == "neogeo":
+        return Emulator(name='neogeo',       emulator='fba2x')
+    if systemName == "mame":
+        return Emulator(name='mame',         emulator='libretro', core='mame078')
+    if systemName == "fba":
+        return Emulator(name='fba',          emulator='fba2x')
+    if systemName == "fba_libretro":
+        return Emulator(name='fba_libretro', emulator='libretro', core='fba')
+    if systemName == "advancemame":
+        return Emulator(name='advancemame',  emulator='advmame')
+ 
+     # Computers
+    if systemName == "msx":
+        return Emulator(name='msx',  emulator='libretro', core='bluemsx')
+    if systemName == "msx1":
+        return Emulator(name='msx1', emulator='libretro', core='bluemsx')
+    if systemName == "msx2":
+        return Emulator(name='msx2', emulator='libretro', core='bluemsx')
+ 
+     # Amiga
+    if systemName == "amiga500":
+        return Emulator(name='amiga500',  emulator='fsuae', core='A500')
+    if systemName == "amiga500p":
+        return Emulator(name='amiga500p', emulator='fsuae', core='A500+')
+    if systemName == "amiga600":
+        return Emulator(name='amiga600',  emulator='fsuae', core='A600')
+    if systemName == "amiga1000":
+        return Emulator(name='amiga1000', emulator='fsuae', core='A1000')
+    if systemName == "amiga1200":
+        return Emulator(name='amiga1200', emulator='fsuae', core='A1200')
+    if systemName == "amiga3000":
+        return Emulator(name='amiga3000', emulator='fsuae', core='A3000')
+    if systemName == "amiga4000":
+        return Emulator(name='amiga4000', emulator='fsuae', core='A4000')
+    if systemName == "amigacd32":
+        return Emulator(name='amigacd32', emulator='fsuae', core='CD32')
+    if systemName == "amigacdtv":
+        return Emulator(name='amigacdtv', emulator='fsuae', core='CDTV')
+
+    #
+    if systemName == "amstradcpc":
+        return Emulator(name='amstradcpc', emulator='libretro', core='cap32')
+    if systemName == "apple2":
+        return Emulator(name='apple2',     emulator='linapple', videomode='default')
+    if systemName == "atarist":
+        return Emulator(name='atarist',    emulator='libretro', core='hatari')
+    if systemName == "zxspectrum":
+        return Emulator(name='zxspectrum', emulator='libretro', core='fuse')
+    if systemName == "odyssey2":
+        return Emulator(name='odyssey2',   emulator='libretro', core='o2em')
+    if systemName == "zx81":
+        return Emulator(name='zx81',       emulator='libretro', core='81')
+    if systemName == "dos":
+        return Emulator(name='dos',        emulator='dosbox', videomode='default')
+    if systemName == "c64":
+        return Emulator(name='c64',        emulator='vice',     core='x64')
+ 
+     #
+    if systemName == "ngp":
+        return Emulator(name='ngp', emulator='libretro', core='mednafen_ngp')
+    if systemName == "ngpc":
+        return Emulator(name='ngpc', emulator='libretro', core='mednafen_ngp')
+    if systemName == "gw":
+        return Emulator(name='gw', emulator='libretro', core='gw')
+    if systemName == "vectrex":
+        return Emulator(name='vectrex', emulator='libretro', core='vecx')
+    if systemName == "lynx":
+        return Emulator(name='lynx', emulator='libretro', core='mednafen_lynx')
+    if systemName == "lutro":
+        return Emulator(name='lutro', emulator='libretro', core='lutro')
+    if systemName == "wswan":
+        return Emulator(name='wswan', emulator='libretro', core='mednafen_wswan', ratio='16/10')
+    if systemName == "wswanc":
+        return Emulator(name='wswanc', emulator='libretro', core='mednafen_wswan', ratio='16/10')
+    if systemName == "pcengine":
+        return Emulator(name='pcengine', emulator='libretro', core='mednafen_supergrafx')
+    if systemName == "pcenginecd":
+        return Emulator(name='pcenginecd', emulator='libretro', core='mednafen_supergrafx')
+    if systemName == "supergrafx":
+        return Emulator(name='supergrafx', emulator='libretro', core='mednafen_supergrafx')
+    if systemName == "atari2600":
+        return Emulator(name='atari2600', emulator='libretro', core='stella')
+    if systemName == "atari7800":
+        return Emulator(name='atari7800', emulator='libretro', core='prosystem')
+    if systemName == "prboom":
+        return Emulator(name='prboom', emulator='libretro', core='prboom')
+    if systemName == "psx":
+        return Emulator(name='psx', emulator='libretro', core='pcsx_rearmed')
+    if systemName == "cavestory":
+        return Emulator(name='cavestory', emulator='libretro', core='nxengine')
+    if systemName == "imageviewer":
+        return Emulator(name='imageviewer', emulator='libretro', core='imageviewer')
+    if systemName == "scummvm":
+        return Emulator(name='scummvm', emulator='scummvm', videomode='default')
+    if systemName == "colecovision":
+        return Emulator(name='colecovision', emulator='libretro', core='bluemsx')
+    if systemName == "jaguar":
+        return Emulator(name='jaguar', emulator='libretro', core='virtualjaguar')
+    if systemName == "3do":
+        return Emulator(name='3do', emulator='libretro', core='4do')
+    if systemName == "kodi":
+        return Emulator(name='kodi', emulator='kodi', videomode='default')
+    if systemName == "moonlight":
+        return Emulator(name='moonlight', emulator='moonlight')
+    if systemName == "psp":
+        return Emulator(name='psp', emulator='ppsspp')
+
+    # nothing found
+    return None
 
 def signal_handler(signal, frame):
     print('Exiting')
@@ -183,6 +274,7 @@ def signal_handler(signal, frame):
         runner.proc.kill()
     
 if __name__ == '__main__':
+    proc = None
     signal.signal(signal.SIGINT, signal_handler)
 
     parser = argparse.ArgumentParser(description='emulator-launcher script')
@@ -220,10 +312,15 @@ if __name__ == '__main__':
     parser.add_argument("-netplay", help="host/client", type=str, required=False)
 
     args = parser.parse_args()
-    exitcode = main(args)
-    time.sleep(1)
+    try:
+        exitcode = -1
+        exitcode = main(args)
+    except Exception as e:
+        eslog.log("configgen exception: ")
+        eslog.logtrace()
+    time.sleep(1) # this seems to be required so that the gpu memory is restituated and available for es
+    eslog.log("Exiting configgen with status " + str(exitcode))
     exit(exitcode)
-    
 
 # Local Variables:
 # tab-width:4

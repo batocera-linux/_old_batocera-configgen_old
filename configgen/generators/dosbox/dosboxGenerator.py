@@ -7,9 +7,13 @@ import glob
 
 
 class DosBoxGenerator(Generator):
+
+    def getResolution(self, config):
+        return 'default'
+    
     # Main entry of the module
     # Return command
-    def generate(self, system, rom, playersControllers):
+    def generate(self, system, rom, playersControllers, gameResolution):
         # Find rom path
         gameDir = rom
         batFile = gameDir + "/dosbox.bat"
@@ -28,4 +32,4 @@ class DosBoxGenerator(Generator):
             commandArray.append("""{}""".format(recalboxFiles.dosboxConfig))
         if 'args' in system.config and system.config['args'] is not None:
             commandArray.extend(system.config['args'])
-        return Command.Command(videomode='default', array=commandArray, env={"SDL_VIDEO_GL_DRIVER":"/usr/lib/libGLESv2.so"})
+        return Command.Command(array=commandArray, env={"SDL_VIDEO_GL_DRIVER":"/usr/lib/libGLESv2.so"})

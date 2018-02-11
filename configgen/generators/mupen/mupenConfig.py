@@ -8,19 +8,13 @@ import json
 
 mupenSettings = UnixSettings(recalboxFiles.mupenCustom, separator=' ')
 
-def writeMupenConfig(system, controllers):
+def writeMupenConfig(system, controllers, gameResolution):
 	setPaths()
 	writeHotKeyConfig(controllers)
 
-	# set to default
-        setCurrentResolution()
-
-	if system.config['videomode'] != 'default':
-		group, mode, drive = system.config['videomode'].split()
-                try:
-		        setRealResolution(group, mode, drive)
-                except Exception:
-                        pass # don't fail
+	# set resolution
+	mupenSettings.save('ScreenWidth', "{}".format(gameResolution["width"]))
+	mupenSettings.save('ScreenHeight', "{}".format(gameResolution["height"]))
 	
 	#Draw or not FPS
 	if system.config['showFPS'] == 'true':
@@ -59,40 +53,6 @@ def createButtonCode(button):
 		return 'B'+button.id
 	if(button.type == 'hat'):
 		return 'H'+button.id+'V'+button.value
-
-
-def setRealResolution(group, mode, drive):
-	# Use tvservice to get the real resolution
-	groups = ['CEA', 'DMT']
-	if group not in groups:
-                raise Exception("{} is an unknown group. Can't switch to {} {} {}".format(group, group, mode, drive))
-		
-	drives = ['HDMI', 'DVI']
-	if drive not in drives:
-                raise Exception("{} is an unknown drive. Can't switch to {} {} {}".format(drive, group, mode, drive))
-		
-	proc = subprocess.Popen(["tvservice -j -m {}".format(group)], stdout=subprocess.PIPE, shell=True)
-	(out, err) = proc.communicate()
-	#print "program output:", out
-	tvmodes = json.loads(out)
-	
-	for tvmode in tvmodes:
-		if tvmode["code"] == int(mode):
-			mupenSettings.save('ScreenWidth', "{}".format(tvmode["width"]))
-			mupenSettings.save('ScreenHeight', "{}".format(tvmode["height"]))
-			return
-
-        raise Exception("The resolution for '{} {} {}' is not supported by your monitor".format(group, mode, drive))
-
-def setCurrentResolution():
-        proc = subprocess.Popen(["tvservice.current"], stdout=subprocess.PIPE, shell=True)
-	(out, err) = proc.communicate()
-	tvmodes = json.loads(out)
-	
-	for tvmode in tvmodes:
-		mupenSettings.save('ScreenWidth', "{}".format(tvmode["width"]))
-		mupenSettings.save('ScreenHeight', "{}".format(tvmode["height"]))
-
 
 def setPaths():
 	mupenSettings.save('ScreenshotPath', recalboxFiles.SCREENSHOTS)

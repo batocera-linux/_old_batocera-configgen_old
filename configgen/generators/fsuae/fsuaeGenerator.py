@@ -44,7 +44,7 @@ class FsuaeGenerator(Generator):
             return filename
         return filename[:-1]
 
-    def generate(self, system, rom, playersControllers):
+    def generate(self, system, rom, playersControllers, gameResolution):
         fsuaeControllers.generateControllerConfig(system, playersControllers)
 
         commandArray = [recalboxFiles.recalboxBins[system.config['emulator']], "--fullscreen",
@@ -103,4 +103,4 @@ class FsuaeGenerator(Generator):
 
         if 'args' in system.config and system.config['args'] is not None:
              commandArray.extend(system.config['args'])
-        return Command.Command(videomode=system.config['videomode'], array=commandArray)
+        return Command.Command(array=commandArray)

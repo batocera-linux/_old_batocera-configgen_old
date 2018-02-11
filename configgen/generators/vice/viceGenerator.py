@@ -7,9 +7,13 @@ import glob
 
 
 class ViceGenerator(Generator):
+
+    def getResolution(self, config):
+        return 'default'
+    
     # Main entry of the module
     # Return command
-    def generate(self, system, rom, playersControllers):
+    def generate(self, system, rom, playersControllers, gameResolution):
         # Settings recalbox default config file if no user defined one
         if not system.config['configfile']:
             # Using recalbox config file
@@ -25,4 +29,4 @@ class ViceGenerator(Generator):
         if 'args' in system.config and system.config['args'] is not None:
             commandArray.extend(system.config['args'])
 
-        return Command.Command(videomode='default', array=commandArray,  env={"SDL_VIDEO_GL_DRIVER": "/usr/lib/libGLESv2.so"})
+        return Command.Command(array=commandArray,  env={"SDL_VIDEO_GL_DRIVER": "/usr/lib/libGLESv2.so"})

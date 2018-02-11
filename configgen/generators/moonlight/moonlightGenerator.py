@@ -8,9 +8,13 @@ import os.path
 
 
 class MoonlightGenerator(Generator):
+
+    def getResolution(self, config):
+        return 'default'
+    
     # Main entry of the module
     # Configure fba and return a command
-    def generate(self, system, rom, playersControllers):
+    def generate(self, system, rom, playersControllers, gameResolution):
         config = moonlightControllers.writeControllersConfig(system, rom, playersControllers)
         gameName = self.getRealGameName(rom)
         # the command to run
@@ -26,7 +30,7 @@ class MoonlightGenerator(Generator):
             commandArray.append(config[mapping])
         commandArray.append('-app')
         commandArray.append(gameName)
-        return Command.Command(videomode='default', array=commandArray)
+        return Command.Command(array=commandArray)
 
     def getRealGameName(self, rom):
         # Rom's basename without extension
