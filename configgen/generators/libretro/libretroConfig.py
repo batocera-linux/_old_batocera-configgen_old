@@ -5,6 +5,7 @@ import recalboxFiles
 import settings
 from settings.unixSettings import UnixSettings
 import json
+import eslog
 
 sys.path.append(
     os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
@@ -216,22 +217,50 @@ def writeBezelConfig(bezel, retroarchConfig, systemName, rom, gameResolution):
                             return
     infos = json.load(open(overlay_info_file))
 
-    # no overlay resize
+    # if image is not at the correct size, find the correct size
+    bezelNeedAdaptation = False
     if gameResolution["width"] != infos["width"] and gameResolution["height"] != infos["height"]:
-        return
+        bezelNeedAdaptation = True
+        resolutionDir = str(gameResolution["width"]) + 'x' + str(gameResolution["height"])
+        overlay_png_file  = recalboxFiles.overlayUser + "/" + bezel + "/" + resolutionDir + "/games/" + rom + ".png"
+        if not os.path.isfile(overlay_png_file):
+            overlay_png_file  = recalboxFiles.overlaySystem + "/" + bezel + "/" + resolutionDir + "/games/" + rom + ".png"
+            if not os.path.isfile(overlay_png_file):
+                overlay_png_file  = recalboxFiles.overlayUser + "/" + bezel + "/" + resolutionDir + "/systems/" + systemName + ".png"
+                if not os.path.isfile(overlay_png_file):
+                    overlay_png_file  = recalboxFiles.overlaySystem + "/" + bezel + "/" + resolutionDir + "/systems/" + systemName + ".png"
+                    if not os.path.isfile(overlay_png_file):
+                        overlay_png_file  = recalboxFiles.overlayUser + "/" + bezel + "/" + resolutionDir + "/default.png"
+                        if not os.path.isfile(overlay_png_file):
+                            overlay_png_file  = recalboxFiles.overlaySystem + "/" + bezel + "/" + resolutionDir + "/default.png"
+                            if not os.path.isfile(overlay_png_file):
+                                eslog.log("no bezel found: " +  recalboxFiles.overlaySystem + "/" + bezel + "/" + resolutionDir + "/systems/" + systemName + ".png")
+                                return
 
     retroarchConfig['input_overlay_enable']       = "true"
     retroarchConfig['input_overlay_scale']        = "1.0"
     retroarchConfig['input_overlay']              = overlay_cfg_file
     retroarchConfig['input_overlay_hide_in_menu'] = "true"
     retroarchConfig['input_overlay_opacity']  = infos["opacity"]
-    retroarchConfig['custom_viewport_x']      = infos["left"]
-    retroarchConfig['custom_viewport_y']      = infos["top"]
-    retroarchConfig['custom_viewport_width']  = infos["width"]  - infos["left"] - infos["right"]
-    retroarchConfig['custom_viewport_height'] = infos["height"] - infos["top"]  - infos["bottom"]
     retroarchConfig['aspect_ratio_index']     = 22 # overwrited from the beginning of this file
-    retroarchConfig['video_message_pos_x']    = infos["messagex"]
-    retroarchConfig['video_message_pos_y']    = infos["messagey"]
+
+    if bezelNeedAdaptation:
+        wratio = gameResolution["width"]  / float(infos["width"])
+        hratio = gameResolution["height"] / float(infos["height"])
+        retroarchConfig['custom_viewport_x']      = infos["left"] * wratio
+        retroarchConfig['custom_viewport_y']      = infos["top"] * hratio
+        retroarchConfig['custom_viewport_width']  = (infos["width"]  - infos["left"] - infos["right"])  * wratio
+        retroarchConfig['custom_viewport_height'] = (infos["height"] - infos["top"]  - infos["bottom"]) * hratio
+        retroarchConfig['video_message_pos_x']    = infos["messagex"] * wratio
+        retroarchConfig['video_message_pos_y']    = infos["messagey"] * hratio
+    else:
+        retroarchConfig['custom_viewport_x']      = infos["left"]
+        retroarchConfig['custom_viewport_y']      = infos["top"]
+        retroarchConfig['custom_viewport_width']  = infos["width"]  - infos["left"] - infos["right"]
+        retroarchConfig['custom_viewport_height'] = infos["height"] - infos["top"]  - infos["bottom"]
+        retroarchConfig['video_message_pos_x']    = infos["messagex"]
+        retroarchConfig['video_message_pos_y']    = infos["messagey"]
+
     writeBezelCfgConfig(overlay_cfg_file, overlay_png_file)
 
 def writeBezelCfgConfig(cfgFile, overlay_png_file):
