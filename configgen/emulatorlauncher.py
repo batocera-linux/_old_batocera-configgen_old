@@ -22,7 +22,6 @@ from generators.fsuae.fsuaeGenerator import FsuaeGenerator
 from generators.amiberry.amiberryGenerator import AmiberryGenerator
 from generators.advancemame.advMameGenerator import AdvMameGenerator
 import controllersConfig as controllers
-import utils.runner as runner
 import signal
 import recalboxFiles
 import os
@@ -268,10 +267,11 @@ def getDefaultEmulator(systemName):
     return None
 
 def signal_handler(signal, frame):
+    global proc
     print('Exiting')
-    if runner.proc:
-        print('killing runner.proc')
-        runner.proc.kill()
+    if proc:
+        print('killing proc')
+        proc.kill()
     
 if __name__ == '__main__':
     proc = None

@@ -5,7 +5,7 @@ import recalboxFiles
 import settings
 from settings.unixSettings import UnixSettings
 import json
-import eslog
+import utils.eslog as eslog
 
 sys.path.append(
     os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
