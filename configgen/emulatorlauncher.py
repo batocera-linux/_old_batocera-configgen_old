@@ -238,6 +238,8 @@ def getDefaultEmulator(systemName):
         return Emulator(name='supergrafx', emulator='libretro', core='mednafen_supergrafx')
     if systemName == "pcfx":
         return Emulator(name='pcfx', emulator='libretro', core='pcfx')
+    if systemName == "intellivision":
+        return Emulator(name='intellivision', emulator='libretro', core='freeintv')
     if systemName == "atari2600":
         return Emulator(name='atari2600', emulator='libretro', core='stella')
     if systemName == "atari7800":
