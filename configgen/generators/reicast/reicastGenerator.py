@@ -38,6 +38,15 @@ class ReicastGenerator(Generator):
             # number of players
             Config.set("players", 'nb', len(playersControllers))
 
+            # wide screen mode
+            if system.config["ratio"] == "16/9":
+                Config.set("config", "rend.WideScreen", "1")
+            # seems buggy + works only in 60hz on my side, so don't apply it automatically
+            #elif system.config["ratio"] == "auto" and gameResolution["width"] / float(gameResolution["height"]) >= (16.0 / 9.0) - 0.1: # let a marge
+            #    Config.set("config", "WideScreen", "1")
+            else:
+                Config.set("config", "rend.WideScreen", "0")
+
             # internal config
             # vmuA1
             if not isfile(recalboxFiles.reicastVMUA1):
@@ -53,7 +62,7 @@ class ReicastGenerator(Generator):
             cfgfile = open(recalboxFiles.reicastConfig,'w+')
             Config.write(cfgfile)
             cfgfile.close()
-                
+
         # the command to run  
         commandArray = [recalboxFiles.recalboxBins[system.config['emulator']]]
         if 'args' in system.config and system.config['args'] is not None:
