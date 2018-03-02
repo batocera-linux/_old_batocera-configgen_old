@@ -46,7 +46,7 @@ class DolphinGenerator(Generator):
 
         # update SYSCONF
         try:
-            dolphinSYSCONF.update(system.config, recalboxFiles.dolphinSYSCONF)
+            dolphinSYSCONF.update(system.config, recalboxFiles.dolphinSYSCONF, gameResolution)
         except Exception:
             pass # don't fail in case of SYSCONF update
 
