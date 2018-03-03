@@ -113,7 +113,7 @@ def createLibretroConfig(system, controllers, rom, bezel, gameResolution):
     if(system.config['core'] in coreToP2Device):
         retroarchConfig['input_libretro_device_p2'] = coreToP2Device[system.config['core']]
 
-    if len(controllers) > 2 and system.config['core'] == 'snes9x_next':
+    if len(controllers) > 2 and (system.config['core'] == 'snes9x_next' or system.config['core'] == 'snes9x'):
         retroarchConfig['input_libretro_device_p2'] = '257'
 
     retroarchConfig['cheevos_enable'] = 'false'
