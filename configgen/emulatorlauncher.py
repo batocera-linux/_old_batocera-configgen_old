@@ -48,7 +48,7 @@ generators = {
     'ppsspp': PPSSPPGenerator(),
     'advancemame' : AdvMameGenerator()
 }
-    
+
 def main(args):
     playersControllers = dict()
     if not args.demo:
@@ -136,7 +136,7 @@ def getDefaultEmulator(systemName):
         return Emulator(name='wii',        emulator='dolphin')
     if systemName == "nds":
         return Emulator(name='nds',        emulator='libretro',    core='desmume')
- 
+
     # Sega
     if systemName == "sg1000":
         return Emulator(name='sg1000',       emulator='libretro', core='genesisplusgx')
@@ -154,7 +154,7 @@ def getDefaultEmulator(systemName):
         return Emulator(name='saturn',       emulator='libretro', core='yabause')
     if systemName == "dreamcast":
         return Emulator(name='dreamcast',    emulator='reicast')
- 
+
      # Arcade
     if systemName == "neogeo":
         return Emulator(name='neogeo',       emulator='fba2x')
@@ -166,7 +166,7 @@ def getDefaultEmulator(systemName):
         return Emulator(name='fba_libretro', emulator='libretro', core='fba')
     if systemName == "advancemame":
         return Emulator(name='advancemame',  emulator='advmame')
- 
+
      # Computers
     if systemName == "msx":
         return Emulator(name='msx',  emulator='libretro', core='bluemsx')
@@ -174,7 +174,7 @@ def getDefaultEmulator(systemName):
         return Emulator(name='msx1', emulator='libretro', core='bluemsx')
     if systemName == "msx2":
         return Emulator(name='msx2', emulator='libretro', core='bluemsx')
- 
+
      # Amiga
     if systemName == "amiga500":
         return Emulator(name='amiga500',  emulator='fsuae', core='A500')
@@ -212,7 +212,7 @@ def getDefaultEmulator(systemName):
         return Emulator(name='dos',        emulator='dosbox', videomode='default')
     if systemName == "c64":
         return Emulator(name='c64',        emulator='vice',     core='x64')
- 
+
      #
     if systemName == "ngp":
         return Emulator(name='ngp', emulator='libretro', core='mednafen_ngp')
@@ -242,6 +242,8 @@ def getDefaultEmulator(systemName):
         return Emulator(name='intellivision', emulator='libretro', core='freeintv')
     if systemName == "atari2600":
         return Emulator(name='atari2600', emulator='libretro', core='stella')
+    if systemName == "atari5200":
+        return Emulator(name='atari5200', emulator='libretro', core='atari800')
     if systemName == "atari7800":
         return Emulator(name='atari7800', emulator='libretro', core='prosystem')
     if systemName == "prboom":
@@ -276,7 +278,7 @@ def signal_handler(signal, frame):
     if proc:
         print('killing proc')
         proc.kill()
-    
+
 if __name__ == '__main__':
     proc = None
     signal.signal(signal.SIGINT, signal_handler)
