@@ -166,3 +166,13 @@ def findBestControllerConfig(controllers, x, pxguid, pxindex, pxname, pxdev, pxn
             return Controller(controller.configName, controller.type, pxguid, x, pxindex, pxname,
                               controller.inputs, pxdev, pxnbaxes)
     return None
+
+def generateSDLGameDBAllControllers(controllers, outputFile = "/tmp/gamecontrollerdb.txt"):
+    finalData = []
+    for idx, controller in controllers.iteritems():
+        finalData.append(controller.generateSDLGameDBLine())
+    sdlData = "\n".join(finalData)
+    with open(outputFile, "w") as text_file:
+        text_file.write(sdlData)
+    return outputFile
+	

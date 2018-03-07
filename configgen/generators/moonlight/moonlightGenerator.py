@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import Command
-import moonlightControllers
+import controllersConfig
 import recalboxFiles
 from generators.Generator import Generator
 import shutil
@@ -15,33 +15,32 @@ class MoonlightGenerator(Generator):
     # Main entry of the module
     # Configure fba and return a command
     def generate(self, system, rom, playersControllers, gameResolution):
-        config = moonlightControllers.writeControllersConfig(system, rom, playersControllers)
-        gameName = self.getRealGameName(rom)
-        # the command to run
-        # stream -remote -keydir ${moonlight_keydir} -${moonlight_screen} -${moonlight_fps} -mapping ${moonlight_mapping} -app \"$game\" ${moonlight_ip}"
-        # commandArray = [recalboxFiles.moonlightBin, 'stream','-remote', '-keydir', recalboxFiles.moonlightCustom + '/keydir', '-720',  '-60fps']
-        commandArray = [recalboxFiles.recalboxBins[system.config['emulator']], 'stream','-config',  recalboxFiles.moonlightConfig]
+		outputFile = recalboxFiles.moonlightCustom + '/gamecontrollerdb.txt'
+        configFile = controllersConfig.generateSDLGameDBAllControllers(playersControllers, outputFile)
+        gameName,confFile = self.getRealGameNameAndConfigFile(rom)
+        commandArray = [recalboxFiles.recalboxBins[system.config['emulator']], 'stream','-config',  confFile]
         if 'args' in system.config and system.config['args'] is not None:
-             commandArray.extend(system.config['args'])
-        for mapping in config:
-            commandArray.append('-mapping')
-            commandArray.append(mapping)
-            commandArray.append('-input')
-            commandArray.append(config[mapping])
+        commandArray.extend(system.config['args'])
         commandArray.append('-app')
         commandArray.append(gameName)
-        return Command.Command(array=commandArray)
+        return Command.Command(videomode='default', array=commandArray, env={"XDG_DATA_DIRS": recalboxFiles.CONF})
 
-    def getRealGameName(self, rom):
+    def getRealGameNameAndConfigFile(self, rom):
         # Rom's basename without extension
         romName = os.path.splitext(os.path.basename(rom))[0]
         # find the real game name
         f = open(recalboxFiles.moonlightGamelist, 'r')
         for line in f:
-            gfeRom = line.split(';')[0].strip()
-            gfeGame = line.split(';')[1].strip()
+            try:
+                gfeRom, gfeGame, confFile = line.rstrip().split(';')
+                #confFile = confFile.rstrip()
+            except:
+                gfeRom, gfeGame = line.split(';')
+                confFile = recalboxFiles.moonlightConfig
             #If found
             if gfeRom == romName:
                 # return it
                 f.close()
-                return gfeGame
+                return [gfeGame, confFile]
+        # If nothing is found (old gamelist file format ?)
+        return [gfeGame, recalboxFiles.moonlightConfig]
