@@ -44,8 +44,8 @@ systemNoRewind = {'sega32x', 'psx', 'zxspectrum', 'odyssey2', 'mame', 'n64'};
 systemToBluemsx = {'msx': '"MSX2"', 'msx1': '"MSX2"', 'msx2': '"MSX2"', 'colecovision': '"COL - ColecoVision"' };
 
 # Define the libretro device type corresponding to the libretro cores, when needed.
-systemToP1Device = {'msx': '257', 'msx1': '257', 'msx2': '257', 'colecovision': '513' };
-systemToP2Device = {'msx': '257', 'msx1': '257', 'msx2': '257', 'colecovision': '513' };
+systemToP1Device = {'msx': '257', 'msx1': '257', 'msx2': '257', 'colecovision': '1' };
+systemToP2Device = {'msx': '257', 'msx1': '257', 'msx2': '257', 'colecovision': '1' };
 
 # Netplay modes
 systemNetplayModes = {'host', 'client'}
