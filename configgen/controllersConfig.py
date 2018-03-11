@@ -175,4 +175,3 @@ def generateSDLGameDBAllControllers(controllers, outputFile = "/tmp/gamecontroll
     with open(outputFile, "w") as text_file:
         text_file.write(sdlData)
     return outputFile
-	
