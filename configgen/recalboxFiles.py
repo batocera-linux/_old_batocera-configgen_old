@@ -82,6 +82,7 @@ reicastVMUA2 = reicastSaves + '/reicast/vmu_save_A2.bin'
 dolphinConfig  = CONF + "/dolphin-emu"
 dolphinData    = SAVES + "/dolphin-emu"
 dolphinIni     = dolphinConfig + '/Dolphin.ini'
+dolphinGfxIni  = dolphinConfig + '/GFX.ini'
 dolphinSYSCONF = dolphinData + "/Wii/shared2/sys/SYSCONF"
 
 ppssppConf = CONF + '/ppsspp/PSP/SYSTEM'
