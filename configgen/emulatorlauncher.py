@@ -212,6 +212,8 @@ def getDefaultEmulator(systemName):
         return Emulator(name='dos',        emulator='dosbox', videomode='default')
     if systemName == "c64":
         return Emulator(name='c64',        emulator='vice',     core='x64')
+    if systemName == "x68000":
+        return Emulator(name='x68000',     emulator='libretro', core='px68k')
 
      #
     if systemName == "ngp":
