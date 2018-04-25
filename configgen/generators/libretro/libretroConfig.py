@@ -35,7 +35,7 @@ coreToP1Device = {'cap32': '513', '81': '257', 'fuse': '513'};
 coreToP2Device = {'fuse': '513'};
 
 # Define systems compatible with retroachievements
-systemToRetroachievements = {'snes', 'nes', 'gba', 'gb', 'gbc', 'megadrive', 'pcengine'};
+systemToRetroachievements = {'snes', 'nes', 'gba', 'gb', 'gbc', 'megadrive', 'mastersystem', 'pcengine', 'lynx', 'ngp', 'atari2600', 'virtualboy', 'neogeo'};
 
 # Define systems not compatible with rewind option
 systemNoRewind = {'sega32x', 'psx', 'zxspectrum', 'odyssey2', 'mame', 'n64'};
