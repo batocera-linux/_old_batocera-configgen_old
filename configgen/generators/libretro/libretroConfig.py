@@ -122,16 +122,35 @@ def createLibretroConfig(system, controllers, rom, bezel, gameResolution):
 
     retroarchConfig['cheevos_enable'] = 'false'
     retroarchConfig['cheevos_hardcore_mode_enable'] = 'false'
+    retroarchConfig['cheevos_leaderboards_enable'] = 'false'
+    retroarchConfig['cheevos_verbose_enable'] = 'false'
+    retroarchConfig['cheevos_auto_screenshot'] = 'false'
 
     if enabled('retroachievements', recalboxConfig):
         if(system.name in systemToRetroachievements):
             retroarchConfig['cheevos_enable'] = 'true'
             retroarchConfig['cheevos_username'] = recalboxConfig.get('retroachievements.username', "")
             retroarchConfig['cheevos_password'] = recalboxConfig.get('retroachievements.password', "")
+            # retroachievements_hardcore_mode
             if enabled('retroachievements.hardcore', recalboxConfig):
                 retroarchConfig['cheevos_hardcore_mode_enable'] = 'true'
             else:
                 retroarchConfig['cheevos_hardcore_mode_enable'] = 'false'
+            # retroachievements_leaderboards
+            if enabled('retroachievements.leaderboards', recalboxConfig):
+                retroarchConfig['cheevos_leaderboards_enable'] = 'true'
+            else:
+                retroarchConfig['cheevos_leaderboards_enable'] = 'false'
+            # retroachievements_verbose_mode
+            if enabled('retroachievements.verbose', recalboxConfig):
+                retroarchConfig['cheevos_verbose_enable'] = 'true'
+            else:
+                retroarchConfig['cheevos_verbose_enable'] = 'false'
+            # retroachievements_automatic_screenshot
+            if enabled('retroachievements.screenshot', recalboxConfig):
+                retroarchConfig['cheevos_auto_screenshot'] = 'true'
+            else:
+                retroarchConfig['cheevos_auto_screenshot'] = 'false'
     else:
         retroarchConfig['cheevos_enable'] = 'false'
 
